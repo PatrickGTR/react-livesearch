@@ -4,7 +4,9 @@ import { Button, Icon, Divider, Input, List } from "semantic-ui-react";
 import "./search.css";
 
 const SearchOutput = props => {
-    return props.data.map(user => <OutputItem user={user} />);
+    return props.data.map(user => (
+        <OutputItem key={user.accountID} user={user} />
+    ));
 };
 
 class OutputItem extends React.Component {
@@ -26,7 +28,7 @@ class OutputItem extends React.Component {
     render() {
         const { user } = this.props;
         return (
-            <List key={user.accountID}>
+            <List>
                 <List.Item>
                     <List.Icon verticalAlign="middle" name="user" />
                     <List.Content>
