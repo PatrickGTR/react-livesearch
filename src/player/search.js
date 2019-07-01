@@ -98,7 +98,10 @@ export default class PlayerSearch extends React.Component {
         }
 
         try {
-            const resp = await fetch(`http://localhost:5000/users/${username}`);
+            const { REACT_APP_API_LOCATION } = process.env;
+            const resp = await fetch(
+                `${REACT_APP_API_LOCATION}/users/${username}`
+            );
             const status = await resp.status;
 
             if (status !== 200) {

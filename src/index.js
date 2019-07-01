@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import PlayerSearch from "./player/search";
 import * as serviceWorker from "./serviceWorker";
-
 import "./index.css";
+
+import PlayerSearch from "./player/search";
 
 const Main = () => {
     return (
