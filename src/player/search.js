@@ -18,7 +18,6 @@ class OutputItem extends React.Component {
         });
     };
 
-    handleClick;
     handleClick = event => {
         event.preventDefault();
         this.toggle();
@@ -76,7 +75,6 @@ export default class PlayerSearch extends React.Component {
 
     emptyRetrievedPlayers() {
         this.setState({ retrievedPlayers: [] });
-        console.log("hey");
     }
 
     handleChange(event) {
