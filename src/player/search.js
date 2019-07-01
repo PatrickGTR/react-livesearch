@@ -9,14 +9,50 @@ const SearchOutput = props => {
     ));
 };
 
+const ShowStatistics = props => {
+    return (
+        <List>
+            <List.Item>
+                <List.Icon verticalAlign="middle" name="user" />
+                <List.Content>
+                    <List.Header as="a" onClick={props.handleClick}>
+                        {props.user.username}
+                    </List.Header>
+                </List.Content>
+                {props.expanded && (
+                    <div className="player-search-output">
+                        <Button>
+                            <Icon name="user md" />
+                            Username: {props.user.username}
+                        </Button>
+                        <Button>
+                            <Icon name="angle up" />
+                            Kills: {props.user.kills}
+                        </Button>
+                        <Button>
+                            <Icon name="angle down" />
+                            Deaths: {props.user.deaths}
+                        </Button>
+                        <Button>
+                            <Icon name="chess board" />
+                            Score: {props.user.score}
+                        </Button>
+                    </div>
+                )}
+            </List.Item>
+            <Divider />
+        </List>
+    );
+};
+
 class OutputItem extends React.Component {
     state = {
         expanded: false
     };
 
     toggle = () => {
-        this.setState({
-            expanded: !this.state.expanded
+        this.setState((prevState, props) => {
+            return { expanded: !prevState.expanded };
         });
     };
 
@@ -26,42 +62,14 @@ class OutputItem extends React.Component {
     };
 
     render() {
-        const { user } = this.props;
         return (
-            <List>
-                <List.Item>
-                    <List.Icon verticalAlign="middle" name="user" />
-                    <List.Content>
-                        <List.Header
-                            as="a"
-                            onClick={event => this.handleClick(event)}
-                        >
-                            {user.username}
-                        </List.Header>
-                    </List.Content>
-                    {this.state.expanded && (
-                        <div className="player-search-output">
-                            <Button>
-                                <Icon name="user md" />
-                                Username: {user.username}
-                            </Button>
-                            <Button>
-                                <Icon name="angle up" />
-                                Kills: {user.kills}
-                            </Button>
-                            <Button>
-                                <Icon name="angle down" />
-                                Deaths: {user.deaths}
-                            </Button>
-                            <Button>
-                                <Icon name="chess board" />
-                                Score: {user.score}
-                            </Button>
-                        </div>
-                    )}
-                </List.Item>
-                <Divider />
-            </List>
+            <div>
+                <ShowStatistics
+                    user={this.props.user}
+                    handleClick={this.handleClick}
+                    expanded={this.state.expanded}
+                />
+            </div>
         );
     }
 }
@@ -79,9 +87,9 @@ export default class PlayerSearch extends React.Component {
         this.setState({ retrievedPlayers: [] });
     }
 
-    handleChange(event) {
+    handleChange = event => {
         this.search(event.target.value);
-    }
+    };
 
     async search(username = null) {
         if (username === "") {
@@ -114,7 +122,7 @@ export default class PlayerSearch extends React.Component {
                 <h2>Search Player</h2>
                 <Input
                     placeholder="Search player..."
-                    onChange={event => this.handleChange(event)}
+                    onChange={this.handleChange}
                 />
                 <div className="player-search-content">
                     <SearchOutput data={retrievedPlayers} />
