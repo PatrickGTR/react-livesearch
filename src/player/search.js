@@ -97,24 +97,37 @@ export default class PlayerSearch extends React.Component {
             return;
         }
 
+        let response;
         try {
-            const { REACT_APP_API_LOCATION } = process.env;
-            const resp = await fetch(
-                `${REACT_APP_API_LOCATION}/users/${username}`
+            const {
+                REACT_APP_API_LOCATION,
+                REACT_APP_SECRET_KEY
+            } = process.env;
+            response = await fetch(
+                `${REACT_APP_API_LOCATION}/users/${username}`,
+                {
+                    method: "GET",
+                    headers: {
+                        // compare auth with back-end
+                        Authorization: REACT_APP_SECRET_KEY,
+                        "Content-Type": "application/json"
+                    }
+                }
             );
-            const status = await resp.status;
-
-            if (status !== 200) {
-                return console.log(
-                    "Looks like there was a problem. Status Code: ",
-                    status
-                );
-            }
-            const data = await resp.json();
-            this.setRetrievedPlayers(data);
         } catch (error) {
-            console.log(error);
+            console.log("failed to GET stats:", error);
+            return;
         }
+
+        let data;
+        try {
+            data = await response.json();
+        } catch (error) {
+            console.log("failed to parse response as JSON:", error);
+            return;
+        }
+
+        this.setRetrievedPlayers(data);
     }
 
     render() {

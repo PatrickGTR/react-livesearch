@@ -1,19 +1,24 @@
 from flask import (
     Flask,
-    jsonify
+    jsonify,
+    request
 )
 
 from flask_cors import CORS
 
 import pymysql
+from os import environ
 
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/users/<username>', methods=["GET"])
+
+@app.route("/users/<username>", methods=["GET"])
 def users(username):
 
+    if request.headers.get('Authorization') != environ.get("REACT_APP_SECRET_KEY"):
+        return jsonify(message="No API key found in requests")
 
     conn = pymysql.connect(
         host="",
