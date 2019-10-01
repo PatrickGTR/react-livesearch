@@ -1,99 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Icon, Divider, Input, List } from "semantic-ui-react";
 
 import "./search.css";
 
-const SearchOutput = props => {
-    return props.data.map(user => (
+const SearchOutput = ({ data }) => {
+    return data.map(user => (
         <OutputItem key={user.accountID} user={user} />
     ));
 };
 
-const ShowStatistics = props => {
+const OutputItem = ({ user }) => {
+    const { username, kills, deaths, score } = user;
+
+    const [expanded, setExpanded] = useState(false);
+
+    const toggle = () => setExpanded(!expanded);
+
+    const handleClick = event => {
+        event.preventDefault();
+        toggle();
+    }
+
     return (
-        <List>
-            <List.Item>
-                <List.Icon verticalAlign="middle" name="user" />
-                <List.Content>
-                    <List.Header as="a" onClick={props.handleClick}>
-                        {props.user.username}
-                    </List.Header>
-                </List.Content>
-                {props.expanded && (
-                    <div className="player-search-output">
-                        <Button>
-                            <Icon name="user md" />
-                            Username: {props.user.username}
-                        </Button>
-                        <Button>
-                            <Icon name="angle up" />
-                            Kills: {props.user.kills}
-                        </Button>
-                        <Button>
-                            <Icon name="angle down" />
-                            Deaths: {props.user.deaths}
-                        </Button>
-                        <Button>
-                            <Icon name="chess board" />
-                            Score: {props.user.score}
-                        </Button>
-                    </div>
-                )}
-            </List.Item>
-            <Divider />
-        </List>
+        <div>
+            <List>
+                <List.Item>
+                    <List.Icon verticalAlign="middle" name="user" />
+                    <List.Content>
+                        <List.Header as="a" onClick={handleClick}>
+                            {username}
+                        </List.Header>
+                    </List.Content>
+                    {expanded && (
+                        <div className="player-search-output">
+                            <Button>
+                                <Icon name="user md" />
+                                Username: {username}
+                            </Button>
+                            <Button>
+                                <Icon name="angle up" />
+                                Kills: {kills}
+                            </Button>
+                            <Button>
+                                <Icon name="angle down" />
+                                Deaths: {deaths}
+                            </Button>
+                            <Button>
+                                <Icon name="chess board" />
+                                Score: {score}
+                            </Button>
+                        </div>
+                    )}
+                </List.Item>
+                <Divider />
+            </List>
+        </div>
     );
 };
 
-class OutputItem extends React.Component {
-    state = {
-        expanded: false
-    };
+const PlayerSearch = () => {
+    const [retrievedPlayers, setRetrievedPlayers] = useState([]);
 
-    toggle = () => {
-        this.setState((prevState, props) => {
-            return { expanded: !prevState.expanded };
-        });
-    };
-
-    handleClick = event => {
-        event.preventDefault();
-        this.toggle();
-    };
-
-    render() {
-        return (
-            <div>
-                <ShowStatistics
-                    user={this.props.user}
-                    handleClick={this.handleClick}
-                    expanded={this.state.expanded}
-                />
-            </div>
-        );
-    }
-}
-
-export default class PlayerSearch extends React.Component {
-    state = {
-        retrievedPlayers: []
-    };
-
-    setRetrievedPlayers = retrievedPlayers => {
-        this.setState({ retrievedPlayers });
-    };
-
-    emptyRetrievedPlayers() {
-        this.setState({ retrievedPlayers: [] });
-    }
-
-    handleChange = event => {
-        this.search(event.target.value);
-    };
-
-    async search(username = null) {
-        if (username === "") {
-            this.emptyRetrievedPlayers();
+    const search = async username => {
+        if (!username) {
+            setRetrievedPlayers([]);
             return;
         }
 
@@ -127,23 +97,23 @@ export default class PlayerSearch extends React.Component {
             return;
         }
 
-        this.setRetrievedPlayers(data);
-    }
+        setRetrievedPlayers(data);
+    };
 
-    render() {
-        const { retrievedPlayers } = this.state;
+    const handleChange = event => search(event.target.value);
 
-        return (
-            <div className="player-search">
-                <h2>Search Player</h2>
-                <Input
-                    placeholder="Search player..."
-                    onChange={this.handleChange}
-                />
-                <div className="player-search-content">
-                    <SearchOutput data={retrievedPlayers} />
-                </div>
+    return (
+        <div className="player-search">
+            <h2>Search Player</h2>
+            <Input
+                placeholder="Search player..."
+                onChange={handleChange}
+            />
+            <div className="player-search-content">
+                <SearchOutput data={retrievedPlayers} />
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
+
+export default PlayerSearch;
